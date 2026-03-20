@@ -89,9 +89,9 @@ async function generatePDF({ nomCli, num, results, selected, LOGO_SRC }) {
   doc.setFillColor(10, 92, 50);
   doc.rect(0, 40, W, 6, "F");
 
-  // Logo circle
+  // Logo circle — couleur harmonisée avec le bandeau vert
   try {
-    doc.setFillColor(255,255,255);
+    doc.setFillColor(4, 43, 18);
     doc.circle(24, 23, 12, "F");
     doc.addImage(LOGO_SRC, "PNG", 12, 11, 24, 24, undefined, "FAST");
   } catch(e) {}
@@ -440,10 +440,10 @@ export default function App() {
 
           {/* Logo + name row */}
           <div style={{ display:"flex", alignItems:"center", gap:14, padding:"14px 20px 0" }}>
-            {/* Logo container — white circle background to match the logo design */}
+            {/* Logo container — fond vert foncé harmonisé avec le header */}
             <div style={{
               width:60, height:60, borderRadius:"50%",
-              background:"white",
+              background:"#042b12",
               boxShadow:"0 4px 20px rgba(0,0,0,0.25), 0 0 0 3px rgba(255,255,255,0.15)",
               flexShrink:0, overflow:"hidden",
               display:"flex", alignItems:"center", justifyContent:"center",

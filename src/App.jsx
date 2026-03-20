@@ -19,6 +19,8 @@ const DUREES = [
 const calcEch = (m, d) => (m / d.refMontant) * d.refEch;
 const fmt     = x => Math.round(x).toLocaleString("fr-FR");
 const fmtD    = x => x.toLocaleString("fr-FR", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+// PDF-safe formatter: uses regular space (not non-breaking space) to avoid "/" artefact in jsPDF
+const fmtPDF  = x => Math.round(x).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 
 function getEli(pct) {
   if (pct <= 0.33) return { label:"Éligible",    short:"Éligible", icon:"✓", color:"#059669", bg:"rgba(5,150,105,0.08)",  border:"rgba(5,150,105,0.3)",  dot:"#10b981" };
@@ -131,7 +133,7 @@ async function generatePDF({ nomCli, num, results, selected, LOGO_SRC }) {
   doc.setFontSize(8);
   doc.setTextColor(100,120,110);
   doc.text(`Numéro de compte : ${num || "—"}`, 22, Y1 + 17);
-  doc.text(`Salaire mensuel : ${fmtD(results.sal)} MRU`, 22, Y1 + 23);
+  doc.text(`Salaire mensuel : ${fmtPDF(results.sal)} MRU`, 22, Y1 + 23);
 
   // Eligibility badge (right side)
   const eliColor = selected.pct <= 0.33 ? [5,150,105] : selected.pct <= 0.50 ? [217,119,6] : [220,38,38];
@@ -154,11 +156,11 @@ async function generatePDF({ nomCli, num, results, selected, LOGO_SRC }) {
 
   const boxes = [
     { label:"Durée",         val: `${selected.mois} mois (${selected.ans} ans)` },
-    { label:"Montant",       val: `${fmtD(results.mon)} MRU` },
-    { label:"Mensualité",    val: `${fmtD(selected.e)} MRU` },
-    { label:"Total dû",      val: `${fmtD(selected.tot)} MRU` },
-    { label:"Coût du crédit",val: `${fmtD(selected.cout)} MRU` },
-    { label:"Reste à vivre", val: `${fmtD(selected.reste)} MRU` },
+    { label:"Montant",       val: `${fmtPDF(results.mon)} MRU` },
+    { label:"Mensualité",    val: `${fmtPDF(selected.e)} MRU` },
+    { label:"Total dû",      val: `${fmtPDF(selected.tot)} MRU` },
+    { label:"Coût du crédit",val: `${fmtPDF(selected.cout)} MRU` },
+    { label:"Reste à vivre", val: `${fmtPDF(selected.reste)} MRU` },
     { label:"Taux d'endett.",val: `${(selected.pct*100).toFixed(1)} %` },
     { label:"Statut",        val: eliText, color: eliColor },
   ];
@@ -201,9 +203,9 @@ async function generatePDF({ nomCli, num, results, selected, LOGO_SRC }) {
     return {
       data: [
         `${row.mois} mois (${row.ans} ans)`,
-        `${fmtD(row.e)} MRU`,
-        `${fmtD(row.tot)} MRU`,
-        `${fmtD(row.cout)} MRU`,
+        `${fmtPDF(row.e)} MRU`,
+        `${fmtPDF(row.tot)} MRU`,
+        `${fmtPDF(row.cout)} MRU`,
         `${(row.pct*100).toFixed(1)} %`,
         e2.label,
       ],
